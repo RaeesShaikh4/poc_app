@@ -1,0 +1,43 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "POC App (Dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "args": [
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "POC App (Live / Production)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_live.dart",
+      "args": [
+        "--dart-define-from-file=config/live.json"
+      ]
+    },
+    {
+      "name": "POC App (Dev - Release)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "program": "lib/main_dev.dart",
+      "args": [
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "POC App (Live - Release)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "program": "lib/main_live.dart",
+      "args": [
+        "--dart-define-from-file=config/live.json"
+      ]
+    }
+  ]
+}

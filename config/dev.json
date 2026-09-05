@@ -1,0 +1,5 @@
+{
+  "APP_ENV": "dev",
+  "APP_NAME": "FakeStore App (Dev)",
+  "API_BASE_URL": "https://fakestoreapi.com"
+}
