@@ -20,10 +20,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     try {
       return await apiClient.getProducts();
     } on DioException catch (e) {
-      throw ServerException(
-        e.message ?? 'Failed to fetch products from FakeStore API',
-        e.response?.statusCode,
-      );
+      throw _handleDioException(e, 'Failed to fetch products from FakeStore API');
     } catch (e) {
       throw ServerException('Unexpected error during API call: $e');
     }
@@ -34,10 +31,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     try {
       return await apiClient.getProductDetails(id);
     } on DioException catch (e) {
-      throw ServerException(
-        e.message ?? 'Failed to fetch product #$id details',
-        e.response?.statusCode,
-      );
+      throw _handleDioException(e, 'Failed to fetch product #$id details');
     } catch (e) {
       throw ServerException('Unexpected error during API call: $e');
     }
@@ -48,10 +42,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     try {
       return await apiClient.getCategories();
     } on DioException catch (e) {
-      throw ServerException(
-        e.message ?? 'Failed to fetch categories',
-        e.response?.statusCode,
-      );
+      throw _handleDioException(e, 'Failed to fetch categories');
     } catch (e) {
       throw ServerException('Unexpected error during API call: $e');
     }
@@ -62,12 +53,25 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     try {
       return await apiClient.getProductsByCategory(category);
     } on DioException catch (e) {
-      throw ServerException(
-        e.message ?? 'Failed to fetch products for category $category',
-        e.response?.statusCode,
-      );
+      throw _handleDioException(e, 'Failed to fetch products for category $category');
     } catch (e) {
       throw ServerException('Unexpected error during API call: $e');
     }
+  }
+
+  ServerException _handleDioException(DioException e, String defaultMessage) {
+    if (e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.sendTimeout ||
+        e.type == DioExceptionType.receiveTimeout) {
+      return ServerException('Connection timed out. Please check your internet connection.', e.response?.statusCode);
+    } else if (e.type == DioExceptionType.connectionError) {
+      return ServerException(
+        'Unable to connect to FakeStore API (Host lookup failed). Please verify your internet connection.',
+        e.response?.statusCode,
+      );
+    } else if (e.response != null) {
+      return ServerException('Server error (${e.response?.statusCode})', e.response?.statusCode);
+    }
+    return ServerException(e.message ?? defaultMessage, e.response?.statusCode);
   }
 }
