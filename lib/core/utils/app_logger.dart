@@ -1,7 +1,7 @@
 import 'package:logger/logger.dart';
 
 /// Centralized application logger wrapping [Logger].
-/// Provides formatted debug, info, warning, and error logs with clean indentation.
+/// Provides formatted debug, info, warning, andn andrror logs with clean indentation.
 class AppLogger {
   static final Logger _logger = Logger(
     printer: PrettyPrinter(

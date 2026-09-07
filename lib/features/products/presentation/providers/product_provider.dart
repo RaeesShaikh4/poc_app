@@ -7,6 +7,17 @@ import '../../domain/repositories/product_repository.dart';
 
 enum ProductStatus { initial, loading, loaded, error }
 
+enum ProductSortOption {
+  defaultSort('Default'),
+  priceLowToHigh('Price: Low to High'),
+  priceHighToLow('Price: High to Low'),
+  ratingHighToLow('Customer Rating: High to Low'),
+  nameAZ('Name: A to Z');
+
+  final String label;
+  const ProductSortOption(this.label);
+}
+
 class ProductProvider extends ChangeNotifier {
   final ProductRepository productRepository;
   final Connectivity connectivity;
@@ -17,6 +28,7 @@ class ProductProvider extends ChangeNotifier {
   List<String> _categories = [];
   String? _selectedCategory;
   String _searchQuery = '';
+  ProductSortOption _sortOption = ProductSortOption.defaultSort;
   String? _errorMessage;
   bool _isFromCache = false;
   bool _isOffline = false;
@@ -37,13 +49,14 @@ class ProductProvider extends ChangeNotifier {
 
   // Getters
   ProductStatus get status => _status;
-  List<ProductEntity> get products => (_searchQuery.isNotEmpty || _selectedCategory != null)
+  List<ProductEntity> get products => (_searchQuery.isNotEmpty || _selectedCategory != null || _sortOption != ProductSortOption.defaultSort)
       ? _filteredProducts
       : _products;
   int get totalProductsCount => _products.length;
   List<String> get categories => _categories;
   String? get selectedCategory => _selectedCategory;
   String get searchQuery => _searchQuery;
+  ProductSortOption get sortOption => _sortOption;
   String? get errorMessage => _errorMessage;
   bool get isFromCache => _isFromCache;
   bool get isOffline => _isOffline;
@@ -116,6 +129,13 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Sets the sort option and applies sorting.
+  void setSortOption(ProductSortOption option) {
+    _sortOption = option;
+    _applyFilters();
+    notifyListeners();
+  }
+
   /// Searches products by title or description.
   void search(String query) {
     _searchQuery = query;
@@ -137,6 +157,25 @@ class ProductProvider extends ChangeNotifier {
             p.description.toLowerCase().contains(queryLower) ||
             p.category.toLowerCase().contains(queryLower);
       }).toList();
+    }
+
+    // Apply sorting
+    switch (_sortOption) {
+      case ProductSortOption.priceLowToHigh:
+        list.sort((a, b) => a.price.compareTo(b.price));
+        break;
+      case ProductSortOption.priceHighToLow:
+        list.sort((a, b) => b.price.compareTo(a.price));
+        break;
+      case ProductSortOption.ratingHighToLow:
+        list.sort((a, b) => b.ratingRate.compareTo(a.ratingRate));
+        break;
+      case ProductSortOption.nameAZ:
+        list.sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+        break;
+      case ProductSortOption.defaultSort:
+        // Keep original order
+        break;
     }
 
     _filteredProducts = list;
