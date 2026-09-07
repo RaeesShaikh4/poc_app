@@ -1,6 +1,6 @@
 {
-    "name": "poc_mcp_app",
-    "short_name": "poc_mcp_app",
+    "name": "Shopify",
+    "short_name": "Shopify",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -35,7 +35,7 @@ class AppConfig {
           environment: Environment.dev,
           appName: String.fromEnvironment(
             'APP_NAME',
-            defaultValue: 'FakeStore App (Dev)',
+            defaultValue: 'Shopify (Dev)',
           ),
           apiBaseUrl: String.fromEnvironment(
             'API_BASE_URL',
@@ -50,7 +50,7 @@ class AppConfig {
           environment: Environment.live,
           appName: String.fromEnvironment(
             'APP_NAME',
-            defaultValue: 'FakeStore App',
+            defaultValue: 'Shopify',
           ),
           apiBaseUrl: String.fromEnvironment(
             'API_BASE_URL',
